@@ -1,13 +1,94 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>TodoAppHybrid</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>AngularJS Todo App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  </head>
+  <body>
+    <div class="container" ng-controller="TodoController">
+      <h1>My Todo List</h1>
+
+      <!-- Notification -->
+      <div
+        class="notification"
+        ng-class="{'show': notification.show, 'success': notification.type === 'success', 'error': notification.type === 'error'}"
+      >
+        {{ notification.message }}
+      </div>
+
+      <!-- Add Todo Form -->
+      <div class="add-todo">
+        <input
+          type="text"
+          ng-model="newTodo"
+          placeholder="Enter a new todo..."
+          ng-keypress="$event.keyCode === 13 && addTodo()"
+        />
+        <button ng-click="addTodo()" ng-disabled="!newTodo.trim()">
+          Add Todo
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <button
+          ng-click="setFilter('all')"
+          ng-class="{'active': currentFilter === 'all'}"
+        >
+          All ({{ getTotalCount() }})
+        </button>
+        <button
+          ng-click="setFilter('active')"
+          ng-class="{'active': currentFilter === 'active'}"
+        >
+          Active ({{ getActiveCount() }})
+        </button>
+        <button
+          ng-click="setFilter('completed')"
+          ng-class="{'active': currentFilter === 'completed'}"
+        >
+          Completed ({{ getCompletedCount() }})
+        </button>
+      </div>
+
+      <!-- Todo List -->
+      <ul class="todo-list" ng-show="getFilteredTodos().length > 0">
+        <li
+          class="todo-item"
+          ng-repeat="todo in getFilteredTodos() track by todo.id"
+          ng-class="{'completed': todo.completed}"
+        >
+          <input
+            type="checkbox"
+            ng-model="todo.completed"
+            ng-change="toggleTodo(todo)"
+          />
+          <span class="todo-text" ng-class="{'completed': todo.completed}">
+            {{ todo.text }}
+          </span>
+          <span class="todo-date">{{ todo.createdAt | date:'short' }}</span>
+          <button class="delete-btn" ng-click="deleteTodo(todo.id)">
+            Delete
+          </button>
+        </li>
+      </ul>
+
+      <!-- Empty State -->
+      <div class="empty-state" ng-show="getFilteredTodos().length === 0">
+        <p ng-show="currentFilter === 'all'">No todos yet. Add one above!</p>
+        <p ng-show="currentFilter === 'active'">No active todos. Great job!</p>
+        <p ng-show="currentFilter === 'completed'">No completed todos yet.</p>
+      </div>
+
+      <!-- Statistics -->
+      <div class="stats">
+        <strong>Statistics:</strong>
+        Total: {{ getTotalCount() }} | Active: {{ getActiveCount() }} |
+        Completed: {{ getCompletedCount() }} | Completion Rate: {{
+        getCompletionRate() }}%
+      </div>
+    </div>
+    <app-root></app-root>
+  </body>
 </html>
