@@ -1,0 +1,82 @@
+<div class="container">
+  <h1>My Todo List</h1>
+
+  <!-- Notification -->
+  <div
+    class="notification"
+    [ngClass]="{
+      show: notification.show,
+      success: notification.type === 'success',
+      error: notification.type === 'error'
+    }"
+  >
+    {{ notification.message }}
+  </div>
+
+  <!-- Add Todo Form -->
+  <div class="add-todo">
+    <input
+      type="text"
+      [(ngModel)]="newTodo"
+      (keyup.enter)="addTodo()"
+      placeholder="Enter a new todo..."
+    />
+    <button (click)="addTodo()" [disabled]="!newTodo.trim()">Add Todo</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button
+      (click)="setFilter('all')"
+      [ngClass]="{ active: currentFilter === 'all' }"
+    >
+      All ({{ getTotalCount() }})
+    </button>
+    <button
+      (click)="setFilter('active')"
+      [ngClass]="{ active: currentFilter === 'active' }"
+    >
+      Active ({{ getActiveCount() }})
+    </button>
+    <button
+      (click)="setFilter('completed')"
+      [ngClass]="{ active: currentFilter === 'completed' }"
+    >
+      Completed ({{ getCompletedCount() }})
+    </button>
+  </div>
+
+  <!-- TODO List -->
+  <ul class="todo-list" *ngIf="filteredTodos.length > 0">
+    <li
+      class="todo-item"
+      *ngFor="let todo of filteredTodos; trackBy: trackById"
+      [ngClass]="{ completed: todo.completed }"
+    >
+      <input
+        type="checkbox"
+        [(ngModel)]="todo.completed"
+        (change)="toggleTodo(todo)"
+      />
+      <span class="todo-text" [ngClass]="{ completed: todo.completed }">
+        {{ todo.text }}
+      </span>
+      <span class="todo-date">{{ todo.createdAt | date : "short" }}</span>
+      <button class="delete-btn" (click)="deleteTodo(todo.id)">Delete</button>
+    </li>
+  </ul>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredTodos.length === 0">
+    <p *ngIf="currentFilter === 'all'">No todos yet. Add one above!</p>
+    <p *ngIf="currentFilter === 'active'">No active yet. Great job!</p>
+    <p *ngIf="currentFilter === 'completed'">No completed todos yet.</p>
+  </div>
+
+  <!-- Statistics -->
+  <div class="stats">
+    <strong>Statistics:</strong>
+    Total: {{ getTotalCount() }} | Active: {{ getActiveCount() }} | Completed:
+    {{ getCompletedCount() }} | Completion Rate: {{ getCompletionRate() }} %
+  </div>
+</div>
