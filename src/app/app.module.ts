@@ -4,17 +4,21 @@ import { UpgradeModule } from '@angular/upgrade/static';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { TodoComponentHybridComponent } from './components/todo-component-hybrid/todo-component-hybrid.component';
+import { TodoHybridComponent } from './components/todo-hybrid/todo-hybrid.component';
+import { FormsModule } from '@angular/forms';
+
+declare var angular: any;
 
 @NgModule({
   declarations: [
     AppComponent,
-    TodoComponentHybridComponent
+    TodoHybridComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     UpgradeModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
@@ -22,7 +26,7 @@ import { TodoComponentHybridComponent } from './components/todo-component-hybrid
 export class AppModule {
   constructor (private upgrade: UpgradeModule) {}
 
-  ngDoBootStrap() {
+  ngDoBootstrap() {
     console.log('Starting bootstrap...');
   }
 }

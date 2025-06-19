@@ -6,7 +6,6 @@ import { environment } from './environments/environment';
 import { UpgradeModule } from '@angular/upgrade/static';
 
 import './assets/legacy/js/app.js';
-import './assets/legacy/js/controllers/todoController.js';
 import './assets/legacy/js/services/todoService.js';
 import './assets/legacy/js/services/notificationService.js';
 import './assets/legacy/js/services/storageService.js';
@@ -21,6 +20,6 @@ platformBrowserDynamic()
   .bootstrapModule(AppModule)
   .then((platformRef) => {
     const upgrade = platformRef.injector.get(UpgradeModule);
-    upgrade.bootstrap(document.body, ['todoApp']);
+    upgrade.bootstrap(document.body, ['todoApp'])
   })
   .catch((err) => console.error(err));
