@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { UpgradeModule } from '@angular/upgrade/static';
 
 interface Todo {
@@ -28,29 +28,32 @@ export class TodoHybridComponent implements OnInit {
   private notificationService: any;
   private storageService: any;
 
-
-  constructor(private upgrade: UpgradeModule) {}
+  constructor(@Optional() private upgrade: UpgradeModule) {}
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.todoService = this.upgrade.$injector.get('TodoService');
-      this.notificationService = this.upgrade.$injector.get('NotificationService');
-      this.storageService = this.upgrade.$injector.get('StorageService');
-      this.todos = this.todoService.getAllTodos();
-      this.notification = this.notificationService.getNotification();
+      if (this.upgrade) {
+        this.todoService = this.upgrade.$injector.get('TodoService');
+        this.notificationService = this.upgrade.$injector.get(
+          'NotificationService'
+        );
+        this.storageService = this.upgrade.$injector.get('StorageService');
+        this.todos = this.todoService.getAllTodos();
+        this.notification = this.notificationService.getNotification();
 
-      const savedFilter = this.storageService.get('todoFilter');
-      if (savedFilter) {
-        this.currentFilter = savedFilter;
+        const savedFilter = this.storageService.get('todoFilter');
+        if (savedFilter) {
+          this.currentFilter = savedFilter;
+        }
+
+        this.todoService.addTodo('Learn AngularJS');
+        this.todoService.addTodo('Build a Todo App');
+        this.todoService.addTodo('Master $scope and services');
+
+        this.todos = this.todoService.getAllTodos(); // reload list
+        this.todos[0].completed = true;
+        this.showNotification('Welcome to your Todo App!', 'success');
       }
-  
-      this.todoService.addTodo('Learn AngularJS');
-      this.todoService.addTodo('Build a Todo App');
-      this.todoService.addTodo('Master $scope and services');
-  
-      this.todos = this.todoService.getAllTodos();  // reload list
-      this.todos[0].completed = true;
-      this.showNotification('Welcome to your Todo App!', 'success');
     }, 0);
   }
 
@@ -58,7 +61,7 @@ export class TodoHybridComponent implements OnInit {
     if (this.notificationService) {
       this.notificationService.show(message, type);
     } else {
-      this.notification = { show: true, message, type};
+      this.notification = { show: true, message, type };
       setTimeout(() => {
         this.notification.show = false;
       }, 3000);
@@ -88,12 +91,12 @@ export class TodoHybridComponent implements OnInit {
   }
 
   toggleTodo(todo: Todo): void {
-   if (this.todoService) {
-    //todo.completed = !todo.completed;
-    this.todoService.toggleTodo(todo);
-    const msg = todo.completed ? 'Todo completed!' : 'Todo marked as active';
-    this.showNotification(msg, 'success');
-   }
+    if (this.todoService) {
+      //todo.completed = !todo.completed;
+      this.todoService.toggleTodo(todo);
+      const msg = todo.completed ? 'Todo completed!' : 'Todo marked as active';
+      this.showNotification(msg, 'success');
+    }
   }
 
   setFilter(filter: any): void {
