@@ -53,9 +53,9 @@ describe('TodoHybridComponent', () => {
     component.newTodo = 'First Todo';
     component.addTodo();
 
-    expect(component.todos.length).toBe(1); // checks the array size if 1 after add
-    expect(component.todos[0].text).toBe('First Todo'); // checks the name of the todo if correct
-    expect(component.newTodo).toBe(''); // checks if newTodo is cleared
+    expect(component.todos.length).toBe(1); 
+    expect(component.todos[0].text).toBe('First Todo'); 
+    expect(component.newTodo).toBe(''); 
   });
 
   // addTodo (3 todos)
@@ -291,8 +291,7 @@ describe('TodoHybridComponent', () => {
         }),
       },
     };
-
-    
+  
     component = new TodoHybridComponent(mockUpgrade as any);
 
     jest.useFakeTimers();
@@ -306,4 +305,25 @@ describe('TodoHybridComponent', () => {
 
     jest.useRealTimers();
   });
+
+  it('should return 0% completion rate when no todos', () => {
+    component.todos = [];
+  
+    const rate = component.getCompletionRate();
+  
+    expect(rate).toBe(0);
+  });
+
+  it('should return all todos if filter is unknown', () => {
+    component.todos = [
+      { id: 1, text: 'Todo 1', completed: false, createdAt: new Date() },
+      { id: 2, text: 'Todo 2', completed: true, createdAt: new Date() },
+    ];
+  
+    component.setFilter('unknownFilter');
+    const filtered = component.filteredTodos;
+  
+    expect(filtered.length).toBe(2);
+  });
+  
 });
